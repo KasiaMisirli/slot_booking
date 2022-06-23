@@ -1,11 +1,17 @@
 class SlotsController < ApplicationController
   def index
-    @available_slots = Slot.all.where(is_booked: false).where("start_date_time  > ?", Time.now)
-    render json: @available_slots
+    available_slots = AvailableSlotsQuery.new.call
+
+    render json: available_slots, status: :ok
   end
 
-  def create
-    # POST
-    # create a booking/slot booking
+  def update
+    validation = UpdateSlotContract.new.call(uuid: params["id"])
+
+    raise ActionController::BadRequest.new, "The request has failed validation" if validation.failure?
+
+    updated_slot = UpdateSlotCommand.new.call(uuid: validation["uuid"])
+
+    render json: updated_slot, status: :ok
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_06_21_200930) do
+ActiveRecord::Schema[7.0].define(version: 2022_06_24_092930) do
   create_table "slots", force: :cascade do |t|
     t.string "uuid"
     t.string "start_date_time"
@@ -18,5 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_21_200930) do
     t.boolean "is_booked"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "booking_id"
   end
+
 end

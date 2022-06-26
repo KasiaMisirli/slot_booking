@@ -6,7 +6,7 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-days = Array(25...30)
+days = Array(27...30)
 days.each do |day|
   hours = Array(0...24)
   hours.each do |value|

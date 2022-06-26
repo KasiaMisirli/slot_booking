@@ -17,46 +17,41 @@ class AvailableSlotsQuery
     following_day_slots = Slot.all.where("start_date_time  > ?", following_day).where("start_date_time < ?", following_day + 1.day)
 
     both_days_slots = slots_requested_day + following_day_slots
+
     durations_prefered = args[:minutes]
     num_of_slots_needed = (durations_prefered / 15.to_f).ceil # Rounding up to serve a window of multiples of 15 minutes
-    duration_slots = []
+
     available_durations = []
 
-    slots_needed = num_of_slots_needed - 1
-
     both_days_slots.each_with_index do |slot, index|
-        binding.pry
-        if DateTime.parse(slot.start_date_time) != requested_day
-            break
-        end
-        if slot.is_booked? 
-            next 
-        end
+      # never start creating a duration slot on the following day
+      if Date.parse(slot.start_date_time) != requested_day
+        break
+      end
 
-        entire_duration_available = true
-        
-        i = 1
-        (num_of_slots_needed-1).times do
-            binding.pry
-            if both_days_slots[index+i].is_booked?
-                entire_duration_available = false
-            end            
-            i=i+1
-        end
+      if slot.is_booked?
+        next
+      end
 
-        # for next_slot_index in 1..(num_of_slots_needed - 1) do
-        #     binding.pry
-        #     if both_days_slots[index+next_slot_index].is_booked?
-        #         entire_duration_available = false
-        #     end
-        # end
+      entire_duration_available = true
 
-        if entire_duration_available == true
-            end_time = DateTime.parse(slot.start_date_time) + (num_of_slots_needed * 15).minutes
-            available_durations.push({start_time: slot.start_date_time, end_time: end_time})
+      i = 1
+      (num_of_slots_needed - 1).times do
+        if both_days_slots[index + i].is_booked?
+          entire_duration_available = false
         end
+        i += 1
+      rescue
+        entire_duration_available = false
+        break
+      end
+
+      if entire_duration_available == true
+        end_time = DateTime.parse(slot.start_date_time) + (num_of_slots_needed * 15).minutes
+        available_durations.push({start_time: slot.start_date_time, end_time: end_time})
+      end
     end
 
-    return available_durations
+    available_durations
   end
 end

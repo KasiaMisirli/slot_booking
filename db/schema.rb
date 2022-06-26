@@ -20,5 +20,4 @@ ActiveRecord::Schema[7.0].define(version: 2022_06_24_092930) do
     t.datetime "updated_at", null: false
     t.string "booking_id"
   end
-
 end

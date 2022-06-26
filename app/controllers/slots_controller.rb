@@ -1,6 +1,13 @@
 class SlotsController < ApplicationController
   def index
-    available_slots = AvailableSlotsQuery.new.call
+    validation = FindSlotsContract.new.call(params.to_unsafe_hash)
+
+    raise ActionController::BadRequest.new, "The request has failed validation" if validation.failure?
+    # binding.pry
+    available_slots = AvailableSlotsQuery.new.call(
+      date: validation["date"],
+      minutes: validation["minutes"]
+    )
 
     render json: available_slots, status: :ok
   end

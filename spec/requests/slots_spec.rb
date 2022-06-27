@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 RSpec.describe SlotsController, type: :request do
@@ -10,7 +12,7 @@ RSpec.describe SlotsController, type: :request do
       end
     end
 
-    context "when all slots are available" do
+    context "when slots are available" do
       before do
         days = [27, 28]
         days.each do |day|
@@ -39,11 +41,10 @@ RSpec.describe SlotsController, type: :request do
         end
       end
 
-      it "returns available slot only" do
+      it "returns available duration slot" do
         get "/slots?date=2022-06-27T00:00:00+00:00&minutes=44"
 
         parsed_response = JSON.parse(response.body)
-
         expect(parsed_response.length).to eq(96)
         expect(parsed_response.first).to eq({"start_time" => "2022-06-27T00:00:00+00:00", "end_time" => "2022-06-27T00:45:00.000+00:00"})
       end
@@ -94,7 +95,7 @@ RSpec.describe SlotsController, type: :request do
             is_booked: false)
         }
 
-        it "returns only the available durations" do
+        it "returns only the available duration slots" do
           get "/slots?date=2022-06-25T00:00:00+00:00&minutes=20"
 
           parsed_response = JSON.parse(response.body)
@@ -114,36 +115,66 @@ RSpec.describe SlotsController, type: :request do
 
   describe "#update" do
     context "when correct dates are passed" do
-      context "and slot is found" do
-        let!(:available_slot) {
-          Slot.create!(uuid: "ef376938-cd49-48b2-b647-42049901b906",
-            start_date_time: 1.week.from_now,
-            end_date_time: 1.week.from_now + 15.minutes,
+      context "and slots are found" do
+        let!(:available_slot_requested_day) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-42049901b901",
+            start_date_time: "2022-06-25T00:00:00 00:00",
+            end_date_time: "2022-06-25T00:15:00 00:00",
+            is_booked: false)
+        }
+        let!(:available_slot_requested_day_2) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-4204990102",
+            start_date_time: "2022-06-25T00:15:00 00:00",
+            end_date_time: "2022-06-25T00:30:00 00:00",
+            is_booked: false)
+        }
+        let!(:available_slot_requested_day_3) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-4204990103",
+            start_date_time: "2022-06-25T00:30:00 00:00",
+            end_date_time: "2022-06-25T00:45:00 00:00",
             is_booked: false)
         }
 
         it "updates the slot" do
-          put "/slots/ef376938-cd49-48b2-b647-42049901b906"
+          put "/slots", params: {start_date: "2022-06-25T00:00:00 00:00", end_date: "2022-06-25T00:15:00.000+00:00"}
+
           expect(response).to have_http_status(:ok)
 
           parsed_response = JSON.parse(response.body)
-          expect(parsed_response["uuid"]).to eq(available_slot.uuid)
-          expect(parsed_response["is_booked"]).to be(true)
+          expect(parsed_response.length).to eq(1)
+          expect(parsed_response[0]["is_booked"]).to be_truthy
+          expect(parsed_response[0]["booking_id"]).to be_present
+        end
+
+        it "updates the slots" do
+          put "/slots", params: {start_date: "2022-06-25T00:00:00 00:00", end_date: "2022-06-25T00:30:00.000+00:00"}
+
+          expect(response).to have_http_status(:ok)
+
+          parsed_response = JSON.parse(response.body)
+          expect(parsed_response.length).to eq(2)
+          expect(parsed_response[0]["is_booked"]).to be_truthy
+          expect(parsed_response[1]["is_booked"]).to be_truthy
+          expect(parsed_response[0]["booking_id"]).to eq(parsed_response[1]["booking_id"])
         end
       end
 
-      context "and slot is not found" do
+      context "when slots are not found" do
         it "throws not found error" do
-          put "/slots/ef376938-cd49-48b2-b647-42049901b100"
+          put "/slots", params: {start_date: "2022-03-30T00:00:00 00:00", end_date: "2022-03-30T00:30:00.000+00:00"}
 
           expect(response).to have_http_status(:not_found)
+
+          parsed_response = JSON.parse(response.body)
+          expect(parsed_response["error"]).to eq("Slots were not found!")
         end
       end
     end
 
-    context "when incorrect uuid is passed" do
+    context "when incorrect data is passed" do
       it "throws a bad request error" do
-        put "/slots/incorrect-uuid"
+        put "/slots", params: {start_date: "2022-03-30T00:00:00 00:00", end_date: "invalid-date"}
+
         expect(response).to have_http_status(:bad_request)
 
         parsed_response = JSON.parse(response.body)

@@ -1,11 +1,9 @@
+# frozen_string_literal: true
+
 class UpdateSlotContract < Dry::Validation::Contract
   params do
-    required(:uuid).filled(:string)
-  end
-
-  rule(:uuid) do
-    unless /\A[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}\z/i.match?(value)
-      key.failure("has invalid format")
-    end
+    # possible impovement: require DateTime dry type
+    required(:start_date).value(min_size?: 25)
+    required(:end_date).value(min_size?: 25)
   end
 end

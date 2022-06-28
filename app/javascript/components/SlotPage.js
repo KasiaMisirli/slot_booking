@@ -5,6 +5,8 @@ const SlotPage = () => {
   const [time, setTime] = useState("");
   const [list, setList] = useState([]);
 
+  // ------------- GET
+
   const getDurationSlots = () => {
     let mounted = true;
     getList(date, time).then((items) => {
@@ -31,6 +33,47 @@ const SlotPage = () => {
     getDurationSlots(date, time);
   };
 
+  // -------------- PUT
+  const [duration, setDuration] = useState("");
+
+  const bookDurationSlot = (duration) => {
+    let mounted = true;
+    bookSlot(duration).then(() => {
+      if (mounted) {
+        console.log(duration, "duration");
+      }
+    });
+    return () => (mounted = false);
+  };
+
+  const bookSlot = (duration) => {
+    return fetch(
+      `http://localhost:3000/slots?start_date=${duration.start_time}&end_date=${duration.end_time}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((data) => data.json())
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  };
+
+  const handleSlotSelection = (e) => {
+    e.preventDefault();
+    bookDurationSlot(duration);
+    showSuccessNotification();
+  };
+
+  const showSuccessNotification = () => {
+    
+  }
+
+  // ------------
+
   return (
     <div>
       <h1>Slot Booking App</h1>
@@ -53,16 +96,27 @@ const SlotPage = () => {
         <input type="submit" value="Submit" />
       </form>
       {list.length !== 0 && (
-        <div>
-          <h1>Available Slot List</h1>
-          <ul>
-            {list.map((item, index) => (
-              <li key={index} index={index}>
-                {formatDate(item.start_time)} - {formatDate(item.end_time)}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <form
+          onSubmit={(e) => {
+            handleSlotSelection(e);
+          }}
+        >
+          <div>
+            <h1>Available Slot List </h1>
+            <h3>Please select a slot 👇 </h3>
+            <ul>
+              {list.map((item, index) => (
+                <button
+                  key={index}
+                  index={index}
+                  onClick={() => setDuration(item)}
+                >
+                  {formatDate(item.start_time)} - {formatDate(item.end_time)}
+                </button>
+              ))}
+            </ul>
+          </div>
+        </form>
       )}
     </div>
   );

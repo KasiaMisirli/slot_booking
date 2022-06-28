@@ -81,3 +81,8 @@ group :development, :test do
 end
 
 gem "dry-validation"
+
+gem 'react-rails'
+
+gem 'webpacker', '~> 5.x'
+

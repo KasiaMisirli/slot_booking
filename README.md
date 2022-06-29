@@ -5,20 +5,25 @@ application up and running.
 
 Things you may want to cover:
 
-* Ruby version
+- Ruby version
+ruby 3.1.2
+Rails 7.0.3
 
-* System dependencies
+- Database initialization
 
-* Configuration
+rails db:migrate
+rails db:seed
 
-* Database creation
+- How to run the test suite
 
-* Database initialization
+rails c -> Will spin up both react and rails.
 
-* How to run the test suite
+In your browser, go to "http://localhost:3000" and you should be able to see the homepage where you can select time to see slots available.
 
-* Services (job queues, cache servers, search engines, etc.)
+GET to see the slots available:
 
-* Deployment instructions
+GET "http://localhost:3000/slots?date=2022-02-01T00:00:00+00:00&minutes=45"
 
-* ...
+PUT to book slot:
+
+PUT "http://localhost:3000/slots" params: {start_date: "2022-01-25T00:00:00+00:00", end_date: "2022-01-25T00:30:00+00:00"}

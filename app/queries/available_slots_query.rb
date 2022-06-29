@@ -10,7 +10,7 @@ class AvailableSlotsQuery
   end
 
   def call
-    requested_day = DateTime.parse(date)
+    requested_day = Date.parse(date)
     following_day = requested_day + 1.day
 
     available_durations = []

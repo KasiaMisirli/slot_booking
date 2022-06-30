@@ -3,7 +3,7 @@
 class SlotsController < ApplicationController
   def home
   end
-  
+
   def index
     validation = FindSlotsContract.new.call(params.to_unsafe_hash)
 
@@ -18,7 +18,6 @@ class SlotsController < ApplicationController
   end
 
   def update
-    # binding.pry
     validation = UpdateSlotContract.new.call(start_date: params["start_date"], end_date: params["end_date"])
 
     raise ActionController::BadRequest.new, "The request has failed validation" if validation.failure?

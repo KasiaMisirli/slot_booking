@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 class AvailableSlotsQuery
-  # Possible impovement: if we want to add user validation, we could add a query handler and keep the query as dry types check only.
-  # We could also create slot repository and keep the queries there.
-
   def initialize(date:, minutes:)
     @date = date
     @minutes = minutes
@@ -17,8 +14,7 @@ class AvailableSlotsQuery
 
     both_days_slots = slots_for_duration(requested_day, following_day)
 
-    # It is possible to break down the below loop into methods which would be called from the loop,
-    # but I left it as is as I thought breaking it down further might make it harder to follow.
+    # Possible imporvement: Break down the below loop into methods
     both_days_slots.each_with_index do |slot, index|
       if Date.parse(slot.start_date_time) != requested_day
         break

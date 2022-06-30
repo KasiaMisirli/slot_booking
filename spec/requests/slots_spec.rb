@@ -135,17 +135,6 @@ RSpec.describe SlotsController, type: :request do
             is_booked: false)
         }
 
-        it "updates the slot" do
-          put "/slots", params: {start_date: "2022-06-25T00:00:00 00:00", end_date: "2022-06-25T00:15:00.000+00:00"}
-
-          expect(response).to have_http_status(:ok)
-
-          parsed_response = JSON.parse(response.body)
-          expect(parsed_response.length).to eq(1)
-          expect(parsed_response[0]["is_booked"]).to be_truthy
-          expect(parsed_response[0]["booking_id"]).to be_present
-        end
-
         it "updates the slots" do
           put "/slots", params: {start_date: "2022-06-25T00:00:00 00:00", end_date: "2022-06-25T00:30:00.000+00:00"}
 
@@ -156,6 +145,35 @@ RSpec.describe SlotsController, type: :request do
           expect(parsed_response[0]["is_booked"]).to be_truthy
           expect(parsed_response[1]["is_booked"]).to be_truthy
           expect(parsed_response[0]["booking_id"]).to eq(parsed_response[1]["booking_id"])
+        end
+      end
+
+      context "when selected slots are already booked" do
+        let!(:booked_slot_requested_day) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-42049901b901",
+            start_date_time: "2022-06-25T00:00:00 00:00",
+            end_date_time: "2022-06-25T00:15:00 00:00",
+            is_booked: true)
+        }
+        let!(:booked_slot_requested_day_2) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-4204990102",
+            start_date_time: "2022-06-25T00:15:00 00:00",
+            end_date_time: "2022-06-25T00:30:00 00:00",
+            is_booked: true)
+        }
+        let!(:booked_slot_requested_day_3) {
+          Slot.create!(uuid: "ef376938-cd49-48b2-b647-4204990103",
+            start_date_time: "2022-06-25T00:30:00 00:00",
+            end_date_time: "2022-06-25T00:45:00 00:00",
+            is_booked: true)
+        }
+        it "throws not found error" do
+          put "/slots", params: {start_date: "2022-03-30T00:00:00 00:00", end_date: "2022-03-30T00:30:00.000+00:00"}
+
+          expect(response).to have_http_status(:not_found)
+
+          parsed_response = JSON.parse(response.body)
+          expect(parsed_response["error"]).to eq("Slots were not found!")
         end
       end
 

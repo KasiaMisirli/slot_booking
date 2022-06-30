@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class AvailableSlotsQuery
-
   def initialize(date:, minutes:)
     @date = date
     @minutes = minutes

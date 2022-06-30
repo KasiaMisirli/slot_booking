@@ -14,7 +14,7 @@ class UpdateSlotCommand
   private
 
   def find_selected_slots(start_date:, end_date:)
-      Slot.all.where(is_booked: false).where("start_date_time  >= ?", start_date).where("end_date_time  <= ?", end_date)
+    Slot.all.where(is_booked: false).where("start_date_time  >= ?", start_date).where("end_date_time  <= ?", end_date)
   end
 
   def update_selected_slots(selected_slots)

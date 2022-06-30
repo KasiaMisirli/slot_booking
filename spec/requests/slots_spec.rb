@@ -167,6 +167,7 @@ RSpec.describe SlotsController, type: :request do
             end_date_time: "2022-06-25T00:45:00 00:00",
             is_booked: true)
         }
+
         it "throws not found error" do
           put "/slots", params: {start_date: "2022-03-30T00:00:00 00:00", end_date: "2022-03-30T00:30:00.000+00:00"}
 

@@ -29,6 +29,8 @@ In your browser, go to "http://localhost:3000" and you should be able to see the
 
 Once selected, the slot gets booked and remaining slots get displayed.
 
+`bundle exec rubocop -A` -> To run the formatter
+
 - Endpoints used:
 
 1. GET to see the slots available:
@@ -52,7 +54,7 @@ These endpoints can also be tested via postman/Insomnia
 - Add Repository to store all the interactions with db in one place
 - Make the validation of input more stict (only allow digits)
 - Chance command/query for dry types check and add command handler/query handler
-- Prepopulate the db to more them two months and ideally in the future :) I prepopulated for January and February 2022 as the booked dates provided where around that time. 
+- Prepopulate the db to more them two months and ideally in the future :) I prepopulated for January and February 2022 as the booked dates provided where around that time.
 
 2. React:
 

@@ -82,7 +82,6 @@ end
 
 gem "dry-validation"
 
-gem 'react-rails'
+gem "react-rails"
 
-gem 'webpacker', '~> 5.x'
-
+gem "webpacker", "~> 5.x"

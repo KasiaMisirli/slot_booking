@@ -3,7 +3,7 @@
 class SlotsController < ApplicationController
   def home
   end
-  
+
   def index
     validation = FindSlotsContract.new.call(params.to_unsafe_hash)
 

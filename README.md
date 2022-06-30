@@ -17,6 +17,8 @@
 
 Assuming you have ruby & rails etc already installed, you should be able to run
 
+`npm install` -> to install node modules
+
 `rails db:migrate` -> to migrate the migrations that I have created
 
 `rails db:seed` -> to seed your database with 2 months of slots as well as the provided booked stots data.
